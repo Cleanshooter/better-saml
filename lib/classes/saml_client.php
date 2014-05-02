@@ -5,6 +5,7 @@ class SAML_Client
     private $saml;
     private $opt;
     private $secretsauce;
+    private $is_saml_user = false;
 
   
     function __construct()
@@ -16,8 +17,24 @@ class SAML_Client
 
         if( $this->settings->get_enabled() )
         {
+            // If the user is already authenticated via SAML, but not logged in yet
+            if( $this->saml->isAuthenticated() && !is_user_logged_in() )
+            {
+                // Get their SAML attributes
+                $attrs = $this->saml->getAttributes();
+                // Simulate sign on with SAML username
+                $this->simulate_signon( $attrs[ $this->settings->get_attribute( 'username' ) ][0] );
+            }
+
+            // Set up SAML auth instance
             $this->saml = new SimpleSAML_Auth_Simple( (string) get_current_blog_id() );
+
+            // Is the current logged in user a SAML user
+            if( is_user_logged_in() ) {
+                $this->is_saml_user = (bool) get_user_meta( get_current_user_id(), '_saml_user', true );
+            }
 			
+            // Add filters
             add_action( 'wp_authenticate', array( $this, 'authenticate' ) );
             add_action( 'wp_logout',       array( $this, 'logout' ) );
             add_action( 'login_form',      array( $this, 'modify_login_form' ) );
@@ -60,7 +77,7 @@ class SAML_Client
             {
 
                 // If user is loaded, check if is a SAML user or if their in the allowed email domain list
-                if( get_user_meta( $user->ID, '_saml_user', true ) == 1 || $this->check_email_domain( $user->data->user_email ) ) {
+                if( get_user_meta( $user->ID, '_saml_user', true ) == 1 || $this->check_email_domain( $user->data->user_email ) || $user->ID == 1 ) {
 
                     $redirect_url = ( array_key_exists( 'redirect_to', $_GET ) ) ? wp_login_url( $_GET['redirect_to'] ) : get_admin_url();
 
@@ -93,12 +110,24 @@ class SAML_Client
         }
     }
 
+
     /**
-    * Check if the email address used to login is allowed to be passed to SAML
-    *
+    * Check for valid SAML username attribute 
     * @return void
     */
-    public function check_email_domain($email_address)
+    private function check_username_attribute( $fallback )
+    {
+        $allowed = $this->settings->get_allowed_email_domains();
+        return strpos($allowed, $email_address);
+    }
+
+
+    /**
+    * Check if the email address used to login is allowed to be passed to SAML 
+    * @todo   Add wildcard checks and whatnot, its basically a string matcher now
+    * @return void
+    */
+    private function check_email_domain($email_address)
     {
         $allowed = $this->settings->get_allowed_email_domains();
         return strpos($allowed, $email_address);
@@ -192,7 +221,7 @@ class SAML_Client
     * @param string $username The user to log in as.
     * @return void
     */
-    private function simulate_signon($username)
+    private function simulate_signon( $username, $redirect_to = false )
     {
         remove_filter('wp_authenticate',array($this,'authenticate'));
 
@@ -214,7 +243,12 @@ class SAML_Client
         }
         else
         {
-            if( array_key_exists( 'redirect_to', $_GET ) )
+            // First check for a specific redirection URL
+            if( $redirect_to )
+            {
+                wp_redirect( $redirect_to );
+            }
+            elseif( array_key_exists( 'redirect_to', $_GET ) )
             {
                 wp_redirect( $_GET['redirect_to'] );
             }
@@ -299,7 +333,7 @@ class SAML_Client
     }
 
     public function disable_function() {
-        die('Disabled');
+        return !$this->is_saml_user;
     }
   
 } // End of Class SamlAuth
