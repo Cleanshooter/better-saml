@@ -34,6 +34,12 @@
 <?php wp_nonce_field('sso_general'); ?>
 <table class="form-table">
   <tr>
+    <th scope="row"><label form="allowed_email_domains">Allowed Email Domains</label></th>
+    <td>
+        <input type="text" id="allowed_email_domains" name="allowed_email_domains" value="<?php echo $saml_opts['allowed_email_domains'] ?>" size="40" />
+        <br><span class="setting-description">Separate domains with a comma, e.g. domain1.com,domain2.com - no spaces.</span>
+    </td>
+  <tr>
     <th scope="row"><label for="allow_sso_bypass">Allow SSO Bypass</label></th>
     <td>
       <?php $checked = ($saml_opts['allow_sso_bypass']) ? 'checked="checked"' : ''; ?>

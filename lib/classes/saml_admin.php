@@ -27,15 +27,15 @@ Class SAML_Admin
   {
   	if( is_multisite() )
   	{
-  		add_submenu_page('settings.php', 'Single Sign-On', 'Single Sign-On', 'manage_network', 'sso_idp.php', array($this,'sso_idp'));
-  		add_submenu_page('settings.php', 'Single Sign-On', 'Single Sign-On', 'manage_network', 'sso_help.php', array($this,'sso_help'));
+  		add_submenu_page('settings.php', 'Better SAML', 'Better SAML', 'manage_network', 'sso_idp.php', array($this,'sso_idp'));
+  		add_submenu_page('settings.php', 'Better SAML', 'Better SAML', 'manage_network', 'sso_help.php', array($this,'sso_help'));
   		
   		remove_submenu_page( 'settings.php', 'sso_help.php' );
   	}
   	else
   	{
-  		add_submenu_page('options-general.php', 'Single Sign-On', 'Single Sign-On', 'administrator', 'sso_idp.php', array($this,'sso_idp'));
-  		add_submenu_page('options-general.php', 'Single Sign-On', 'Single Sign-On', 'administrator', 'sso_help.php', array($this,'sso_help'));
+  		add_submenu_page('options-general.php', 'Better SAML', 'Better SAML', 'administrator', 'sso_idp.php', array($this,'sso_idp'));
+  		add_submenu_page('options-general.php', 'Better SAML', 'Better SAML', 'administrator', 'sso_help.php', array($this,'sso_help'));
   		
   		remove_submenu_page( 'options-general.php', 'sso_idp.php' );
   		remove_submenu_page( 'options-general.php', 'sso_help.php' );
@@ -44,9 +44,9 @@ Class SAML_Admin
   
   function saml_sp_menus()
   {
-  	add_submenu_page('options-general.php', 'Single Sign-On', 'Single Sign-On', 'administrator', 'sso_general.php', array($this,'sso_general'));
-  	add_submenu_page('options-general.php', 'Single Sign-On', 'Single Sign-On', 'administrator', 'sso_sp.php', array($this,'sso_sp'));
-  	add_submenu_page('options-general.php', 'Single Sign-On', 'Single Sign-On', 'administrator', 'sso_help.php', array($this,'sso_help'));
+  	add_submenu_page('options-general.php', 'Better SAML', 'Better SAML', 'administrator', 'sso_general.php', array($this,'sso_general'));
+  	add_submenu_page('options-general.php', 'Better SAML', 'Better SAML', 'administrator', 'sso_sp.php', array($this,'sso_sp'));
+  	add_submenu_page('options-general.php', 'Better SAML', 'Better SAML', 'administrator', 'sso_help.php', array($this,'sso_help'));
   	
   	remove_submenu_page( 'options-general.php', 'sso_sp.php');
   	remove_submenu_page( 'options-general.php', 'sso_help.php');
@@ -76,9 +76,9 @@ Class SAML_Admin
           'ok'            => 'You have provided an Entity ID for your IdP.',
         ),
         'idp_sso' => array(
-          'error'   => 'You have not changed your IdP&rsquo;s Single Sign-On URL from the default value. You should update it to a real value.',
-          'warning' => 'You have not provided a Single Sign-On URL for your IdP. Users will have to log in using the <a href="?page=sso_help.php#idp-first-flow">IdP-first flow</a>.',
-          'ok'      => 'You have provided a Single Sign-On URL for your IdP.',
+          'error'   => 'You have not changed your IdP&rsquo;s Better SAML URL from the default value. You should update it to a real value.',
+          'warning' => 'You have not provided a Better SAML URL for your IdP. Users will have to log in using the <a href="?page=sso_help.php#idp-first-flow">IdP-first flow</a>.',
+          'ok'      => 'You have provided a Better SAML URL for your IdP.',
         ), 
         'idp_slo' => array(
           'error'   => 'You have not changed your IdP&rsquo;s Single Logout URL from the default value. You should update it to a real value.',

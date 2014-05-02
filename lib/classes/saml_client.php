@@ -9,16 +9,17 @@ class SAML_Client
   
     function __construct()
     {
+
         $this->settings = new SAML_Settings();
     
         require_once( constant( 'SAMLAUTH_ROOT' ) . '/saml/lib/_autoload.php' );
 
-		if( $this->settings->get_enabled() )
-		{
-			$this->saml = new SimpleSAML_Auth_Simple( (string) get_current_blog_id() );
+        if( $this->settings->get_enabled() )
+        {
+            $this->saml = new SimpleSAML_Auth_Simple( (string) get_current_blog_id() );
 			
-			add_action( 'wp_authenticate', array( $this,'authenticate' ) );
-	        add_action( 'wp_logout',       array( $this,'logout' ) );
+            add_action( 'wp_authenticate', array( $this, 'authenticate' ) );
+            add_action( 'wp_logout',       array( $this, 'logout' ) );
             add_action( 'login_form',      array( $this, 'modify_login_form' ) );
 		}
     
@@ -38,7 +39,7 @@ class SAML_Client
     *
     *  @return void
     */
-    public function authenticate()
+    public function authenticate( $username, $password )
     {
 
         if( isset( $_GET['loggedout'] ) && $_GET['loggedout'] == 'true' )
@@ -54,41 +55,53 @@ class SAML_Client
 
         else
         {
-            $redirect_url = ( array_key_exists( 'redirect_to', $_GET ) ) ? wp_login_url( $_GET['redirect_to'] ) : get_admin_url();
-
-            $this->saml->requireAuth( 
-                array( 'ReturnTo' => $redirect_url ) 
-            );
-
-            $attrs = $this->saml->getAttributes();
-
-            if( array_key_exists( $this->settings->get_attribute( 'username' ), $attrs ) )
+            // Attempt to load user by username
+            if( $user = get_user_by( 'login', $username ) )
             {
-                $username = $attrs[ $this->settings->get_attribute( 'username' ) ][0];
 
-                // Attempt to load user by username
-                if( $user = get_user_by( 'login', $username ) )
-                {
-                    // If user is loaded, check if is a SAML user
-                    if( get_user_meta( $user->ID, '_saml_user', true ) == 1 ) {
+                // If user is loaded, check if is a SAML user or if their in the allowed email domain list
+                if( get_user_meta( $user->ID, '_saml_user', true ) == 1 || $this->check_email_domain( $user->data->user_email ) ) {
 
-                        // Simulate SAML user sign on
-                        $this->simulate_signon( $username );
+                    $redirect_url = ( array_key_exists( 'redirect_to', $_GET ) ) ? wp_login_url( $_GET['redirect_to'] ) : get_admin_url();
+
+                    $this->saml->requireAuth( 
+                        array( 'ReturnTo' => $redirect_url )
+                    );
+
+                    $attrs = $this->saml->getAttributes();
+
+                    if( array_key_exists( $this->settings->get_attribute( 'username' ), $attrs ) )
+                    {
+                        $saml_username = $attrs[ $this->settings->get_attribute( 'username' ) ][0];
+                    }
+                    else
+                    {
+                        $saml_username = $username;
                     }
 
-                    // ELSE: Do nothing if not
+                    // Simulate SAML user sign on
+                    $this->simulate_signon( $saml_username );
                 }
-                // If no user found, create them
-                else
-                {
-                    $this->new_user( $attrs );
-                }
+
+                // ELSE: Do nothing if not
             }
+            // If no user found, create them
             else
             {
-                die( 'A username was not provided.' );
-            }  
+                $this->new_user( $attrs );
+            }
         }
+    }
+
+    /**
+    * Check if the email address used to login is allowed to be passed to SAML
+    *
+    * @return void
+    */
+    public function check_email_domain($email_address)
+    {
+        $allowed = $this->settings->get_allowed_email_domains();
+        return strpos($allowed, $email_address);
     }
   
 

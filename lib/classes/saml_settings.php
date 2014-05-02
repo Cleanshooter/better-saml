@@ -71,6 +71,17 @@ Class SAML_Settings
       return false;
     }
   }
+
+
+  /**
+   * Get the "allowed_email_domains" setting
+   *
+   * @return bool
+   */
+  public function get_allowed_email_domains()
+  {
+    return (bool) $this->settings['allowed_email_domains'];  
+  }
   
   /**
    * Get the "allow_unlisted_users" setting
