@@ -1,11 +1,11 @@
 <?php
 /*
-Plugin Name: SAML 2.0 Single Sign-On
-Version: 0.9.2
-Plugin URI: http://keithbartholomew.com
-Description: Authenticate users using <a href="http://rnd.feide.no/simplesamlphp">simpleSAMLphp</a>.
-Author: Keith Bartholomew
-Author URI: http://keithbartholomew.com
+Plugin Name: Better SAML
+Version: 0.1
+Plugin URI: https://github.com/tectonic/better_saml
+Description: Better SAML authentication
+Author: Tim Sheehan @ Tectonic Digital
+Author URI: http://tectonic.com.au
 */
 
 $upload_dir = wp_upload_dir();
