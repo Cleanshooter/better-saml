@@ -70,7 +70,7 @@ class SAML_Client
                 if( $user = get_user_by( 'login', $username ) )
                 {
                     // If user is loaded, check if is a SAML user
-                    if( get_user_meta( $user->ID, '_saml_user', true ) ) {
+                    if( get_user_meta( $user->ID, '_saml_user', true ) == 1 ) {
 
                         // Simulate SAML user sign on
                         $this->simulate_signon( $username );
