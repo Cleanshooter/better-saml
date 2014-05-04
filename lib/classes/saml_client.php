@@ -17,28 +17,26 @@ class SAML_Client
 
         if( $this->settings->get_enabled() )
         {
-            // If the user is already authenticated via SAML, but not logged in yet
-            if( $this->saml->isAuthenticated() && !is_user_logged_in() )
-            {
-                // Get their SAML attributes
-                $attrs = $this->saml->getAttributes();
-                // Simulate sign on with SAML username
-                $this->simulate_signon( $attrs[ $this->settings->get_attribute( 'username' ) ][0] );
-            }
 
             // Set up SAML auth instance
             $this->saml = new SimpleSAML_Auth_Simple( (string) get_current_blog_id() );
 
+            // If the user is already authenticated via SAML, but not logged in yet
+            // if( $this->saml->isAuthenticated() && !is_user_logged_in() )
+            // {
+            //     // Get their SAML attributes
+            //    $attrs = $this->saml->getAttributes();
+                // Simulate sign on with SAML username
+            //    $this->simulate_signon( $attrs[ $this->settings->get_attribute( 'username' ) ][0] );
+            //}
+
             // Is the current logged in user a SAML user
-            if( is_user_logged_in() ) {
-                $this->is_saml_user = (bool) get_user_meta( get_current_user_id(), '_saml_user', true );
-            }
-			
+            
             // Add filters
             add_action( 'wp_authenticate', array( $this, 'authenticate' ) );
             add_action( 'wp_logout',       array( $this, 'logout' ) );
             add_action( 'login_form',      array( $this, 'modify_login_form' ) );
-		}
+        }
     
         // Hash to generate password for SAML users.
         // This is never actually used by the user, but we need to know what it is, and it needs to be consistent
@@ -333,7 +331,7 @@ class SAML_Client
     }
 
     public function disable_function() {
-        return !$this->is_saml_user;
+        return !(bool) get_user_meta( get_current_user_id(), '_saml_user', true );
     }
   
 } // End of Class SamlAuth
