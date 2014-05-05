@@ -5,8 +5,6 @@ class SAML_Client
     private $saml;
     private $opt;
     private $secretsauce;
-    private $is_saml_user = false;
-
   
     function __construct()
     {
@@ -75,7 +73,7 @@ class SAML_Client
             {
 
                 // If user is loaded, check if is a SAML user or if their in the allowed email domain list
-                if( get_user_meta( $user->ID, '_saml_user', true ) == 1 || $this->check_email_domain( $user->data->user_email ) || $user->ID == 1 ) {
+                if( get_user_meta( $user->ID, '_saml_user', true ) == 1 || $this->check_email_domain( $user->data->user_email ) ) {
 
                     $redirect_url = ( array_key_exists( 'redirect_to', $_GET ) ) ? wp_login_url( $_GET['redirect_to'] ) : get_admin_url();
 
