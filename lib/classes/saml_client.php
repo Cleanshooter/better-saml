@@ -46,6 +46,11 @@ class SAML_Client
         $this->secretsauce = constant( 'AUTH_KEY' );
     }
 
+    public function getLoginUrl( $return )
+    {
+        return $this->saml->getLoginURL ( $return );
+    }
+
   
     /**
     *  Authenticates the user using SAML
@@ -163,7 +168,7 @@ class SAML_Client
     */
     private function new_user($attrs)
     {
-        if( array_key_exists($this->settings->get_attribute('username'),$attrs) )
+        if( array_key_exists( $this->settings->get_attribute('username'), $attrs ) )
         {
             $login = (array_key_exists($this->settings->get_attribute('username'),$attrs)) ? $attrs[$this->settings->get_attribute('username')][0] : 'NULL';
             $email = (array_key_exists($this->settings->get_attribute('email'),$attrs)) ? $attrs[$this->settings->get_attribute('email')][0] : '';
@@ -173,7 +178,7 @@ class SAML_Client
         }
         else
         {
-            die('A username was not provided.');
+            return;
         }
 
         $role = $this->update_role();
@@ -192,16 +197,16 @@ class SAML_Client
             );
 
             // If we successfully created a user
-            if( $user_id = wp_insert_user($user_opts) ) {
-
+            if( $user_id = wp_insert_user($user_opts) )
+            {
                 // Identify them as a saml user
                 add_user_meta( $user_id, '_saml_user', 1 );
 
                 // Simulate the signon
                 $this->simulate_signon( $login );
             }
-
-            else {
+            else 
+            {
                 die( 'The user couldnt be created' );
             }
         }
