@@ -151,12 +151,17 @@ class SimpleSAML_Utilities {
 	 */
 	public static function selfURLNoQuery() {
 	
-		$selfURLhost = self::selfURLhost();
-		$selfURLhost .= $_SERVER['SCRIPT_NAME'];
-		if (isset($_SERVER['PATH_INFO'])) {
-			$selfURLhost .= $_SERVER['PATH_INFO'];
-		}
-		return $selfURLhost;
+       $url = self::selfURL();
+       $url = strtok($url, '?');
+       return $url;
+       /* OLD Method that did not listen to rewrites by server
+        $selfURLhost = self::selfURLhost();
+        $selfURLhost .= $_SERVER['SCRIPT_NAME'];
+        if (isset($_SERVER['PATH_INFO'])) {
+            $selfURLhost .= $_SERVER['PATH_INFO'];
+        }
+        return $selfURLhost;
+       */
 	
 	}
 

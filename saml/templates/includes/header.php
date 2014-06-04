@@ -1,3 +1,4 @@
+<?php header('X-Frame-Options: SAMEORIGIN') ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <?php
 
@@ -38,7 +39,6 @@ if (array_key_exists('pageid', $this->data)) {
  * sites to put simpleSAMLphp in a frame. The latter is however
  * probably not a good security practice.
  */
-header('X-Frame-Options: SAMEORIGIN');
 
 ?>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
