@@ -26,8 +26,8 @@ class SAML_Client
                      // Get their SAML attributes
                     $attrs = $this->saml->getAttributes();
 
-                    die(var_dum($attrs));
-                    
+                    die(var_dump($attrs));
+
                     // Simulate sign on with SAML username
                     $this->simulate_signon( $attrs[ $this->settings->get_attribute( 'username' ) ][0] );
                 }
