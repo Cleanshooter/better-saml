@@ -15,10 +15,13 @@ class SAML_Client
 
         if( $this->settings->get_enabled() )
         {
+            // Set up SAML auth instance
+            $this->saml = new SimpleSAML_Auth_Simple( (string) get_current_blog_id() );
+
+            die(var_dump($this->saml->isAuthenticated()));
 
             if( strpos( $_SERVER['HTTP_REFERER'], 'https://saml.test.det.nsw.edu.au/sso/' ) )
             {
-                die(var_dump($this->saml->isAuthenticated()));
                 // If the user is already authenticated via SAML, but not logged in yet
                 if( $this->saml->isAuthenticated()  )
                 {
@@ -28,9 +31,6 @@ class SAML_Client
                     $this->simulate_signon( $attrs[ $this->settings->get_attribute( 'username' ) ][0] );
                 }
             }
-
-            // Set up SAML auth instance
-            $this->saml = new SimpleSAML_Auth_Simple( (string) get_current_blog_id() );
             
             // Add filters
             add_action( 'wp_authenticate', array( $this, 'authenticate' ) );
