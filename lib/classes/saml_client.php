@@ -18,13 +18,16 @@ class SAML_Client
             // Set up SAML auth instance
             $this->saml = new SimpleSAML_Auth_Simple( (string) get_current_blog_id() );
 
-            if( in_array( $GLOBALS['pagenow'], [ 'wp-login.php', 'wp-register.php' ] ) )
+            if( $_GET['saml_action'] == 'login' )
             {
                 // If the user is already authenticated via SAML, but not logged in yet
                 if( $this->saml->isAuthenticated() && !is_user_logged_in()  )
                 {
                      // Get their SAML attributes
                     $attrs = $this->saml->getAttributes();
+
+                    die(var_dum($attrs));
+                    
                     // Simulate sign on with SAML username
                     $this->simulate_signon( $attrs[ $this->settings->get_attribute( 'username' ) ][0] );
                 }
