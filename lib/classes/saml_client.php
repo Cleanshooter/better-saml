@@ -21,7 +21,7 @@ class SAML_Client
             if( $_GET['saml_action'] == 'login' )
             {
                 // If the user is already authenticated via SAML, but not logged in yet
-                if( $this->saml->isAuthenticated() && !is_user_logged_in()  )
+                if( $this->saml->isAuthenticated() )
                 {
                      // Get their SAML attributes
                     $attrs = $this->saml->getAttributes();
@@ -29,7 +29,7 @@ class SAML_Client
                     die(var_dump($attrs));
 
                     // Simulate sign on with SAML username
-                    $this->simulate_signon( $attrs[ $this->settings->get_attribute( 'username' ) ][0] );
+                    $this->authenticate( $attrs[ $this->settings->get_attribute( 'username' ) ][0] );
                 }
             }
             
@@ -60,7 +60,7 @@ class SAML_Client
     *
     *  @return void
     */
-    public function authenticate( $username, $password )
+    public function authenticate( $username )
     {
 
         if( isset( $_GET['loggedout'] ) && $_GET['loggedout'] == 'true' )
