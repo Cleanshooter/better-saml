@@ -34,6 +34,8 @@ class SAML_Client
         $this->secretsauce = constant( 'AUTH_KEY' );
     }
 
+
+    // Capture init, need to be sure of login state without having login processed
     public function init()
     {
         if( $_GET['saml_action'] == 'login' || strpos( $_SERVER['HTTP_REFERER'], 'https://saml.test.det.nsw.edu.au/sso/UI/Login' ) || strpos( $_SERVER['HTTP_REFERER'], 'better-saml/saml/www/module.php/saml/sp/saml2-acs.php' ) )
