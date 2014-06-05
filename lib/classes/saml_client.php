@@ -16,19 +16,21 @@ class SAML_Client
         if( $this->settings->get_enabled() )
         {
 
+            if(strpos('https://saml.test.det.nsw.edu.au/sso/', $_SERVER['HTTP_REFERER']))
+            {
+                die(var_dump($this->saml->isAuthenticated()));
+                // If the user is already authenticated via SAML, but not logged in yet
+                if( $this->saml->isAuthenticated()  )
+                {
+                     // Get their SAML attributes
+                    $attrs = $this->saml->getAttributes();
+                    // Simulate sign on with SAML username
+                    $this->simulate_signon( $attrs[ $this->settings->get_attribute( 'username' ) ][0] );
+                }
+            }
+
             // Set up SAML auth instance
             $this->saml = new SimpleSAML_Auth_Simple( (string) get_current_blog_id() );
-
-            // If the user is already authenticated via SAML, but not logged in yet
-            // if( $this->saml->isAuthenticated() && !is_user_logged_in() )
-            // {
-            //     // Get their SAML attributes
-            //    $attrs = $this->saml->getAttributes();
-                // Simulate sign on with SAML username
-            //    $this->simulate_signon( $attrs[ $this->settings->get_attribute( 'username' ) ][0] );
-            //}
-
-            // Is the current logged in user a SAML user
             
             // Add filters
             add_action( 'wp_authenticate', array( $this, 'authenticate' ) );
@@ -151,7 +153,8 @@ class SAML_Client
     *
     * @return void
     */
-    public function modify_login_form() {
+    public function modify_login_form() 
+    {
 
         if( array_key_exists('use_sso', $_GET) && $_GET['use_sso'] == 'false' && $this->settings->get_allow_sso_bypass() == true )
         {
