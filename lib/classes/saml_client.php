@@ -26,10 +26,8 @@ class SAML_Client
                      // Get their SAML attributes
                     $attrs = $this->saml->getAttributes();
 
-                    die(var_dump($attrs));
-
                     // Simulate sign on with SAML username
-                    $this->authenticate( $attrs[ $this->settings->get_attribute( 'username' ) ][0] );
+                    $this->authenticate( $attrs['sAMAccountName'][0] );
                 }
             }
             
@@ -60,7 +58,7 @@ class SAML_Client
     *
     *  @return void
     */
-    public function authenticate( $username )
+    public function authenticate( $username  )
     {
 
         if( isset( $_GET['loggedout'] ) && $_GET['loggedout'] == 'true' )
