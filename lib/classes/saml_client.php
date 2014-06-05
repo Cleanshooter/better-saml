@@ -27,12 +27,12 @@ class SAML_Client
                     $attrs = $this->saml->getAttributes();
 
                     // Simulate sign on with SAML username
-                    $this->authenticate( $attrs['sAMAccountName'][0] );
+                    $this->authenticate( $attrs );
                 }
             }
             
             // Add filters
-            add_action( 'wp_authenticate', array( $this, 'authenticate' ) );
+            // add_action( 'wp_authenticate', array( $this, 'authenticate' ) );
             add_action( 'wp_logout',       array( $this, 'logout' ) );
             add_action( 'login_form',      array( $this, 'modify_login_form' ) );
         }
@@ -58,58 +58,29 @@ class SAML_Client
     *
     *  @return void
     */
-    public function authenticate( $username  )
+    public function authenticate( $attrs )
     {
+        $username = $this->settings->get_attribute( 'username', $attrs );
 
-        if( isset( $_GET['loggedout'] ) && $_GET['loggedout'] == 'true' )
+        // Attempt to load user by username
+        if( $user = get_user_by( 'login', $username ) )
         {
-            header( 'Location: ' . get_option( 'siteurl' ) );
-            exit();
+            $redirect_url = ( array_key_exists( 'redirect_to', $_GET ) ) ? wp_login_url( $_GET['redirect_to'] ) : get_admin_url();
+
+            $this->saml->requireAuth( 
+                array( 'ReturnTo' => $redirect_url )
+            );
+
+            // Simulate SAML user sign on
+            $this->simulate_signon( $username );
         }
 
-        elseif ( $this->settings->get_allow_sso_bypass() == true  && ( ( isset( $_GET['use_sso'] ) && $_GET['use_sso'] == 'false' ) || ( isset( $_POST['use_sso'] ) && $_POST['use_sso'] == 'false' ) ) )
-        {
-            // User wants native WP login, do nothing
-        }
-
+        // If no user found, create them
         else
         {
-            // Attempt to load user by username
-            if( $user = get_user_by( 'login', $username ) )
-            {
-
-                // If user is loaded, check if is a SAML user or if their in the allowed email domain list
-                if( get_user_meta( $user->ID, '_saml_user', true ) == 1 || $this->check_email_domain( $user->data->user_email ) ) {
-
-                    $redirect_url = ( array_key_exists( 'redirect_to', $_GET ) ) ? wp_login_url( $_GET['redirect_to'] ) : get_admin_url();
-
-                    $this->saml->requireAuth( 
-                        array( 'ReturnTo' => $redirect_url )
-                    );
-
-                    $attrs = $this->saml->getAttributes();
-
-                    if( array_key_exists( $this->settings->get_attribute( 'username' ), $attrs ) )
-                    {
-                        $saml_username = $attrs[ $this->settings->get_attribute( 'username' ) ][0];
-                    }
-                    else
-                    {
-                        $saml_username = $username;
-                    }
-
-                    // Simulate SAML user sign on
-                    $this->simulate_signon( $saml_username );
-                }
-
-                // ELSE: Do nothing if not
-            }
-            // If no user found, create them
-            else
-            {
-                $this->new_user( $attrs );
-            }
+            $this->new_user( $attrs );
         }
+
     }
 
 
