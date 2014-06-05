@@ -18,9 +18,7 @@ class SAML_Client
             // Set up SAML auth instance
             $this->saml = new SimpleSAML_Auth_Simple( (string) get_current_blog_id() );
 
-            die(var_dump($this->saml->isAuthenticated()));
-
-            if( strpos( $_SERVER['HTTP_REFERER'], 'https://saml.test.det.nsw.edu.au/sso/' ) )
+            if( in_array( $GLOBALS['pagenow'], [ 'wp-login.php', 'wp-register.php' ] ) )
             {
                 // If the user is already authenticated via SAML, but not logged in yet
                 if( $this->saml->isAuthenticated()  )
