@@ -21,7 +21,7 @@ class SAML_Client
             if( in_array( $GLOBALS['pagenow'], [ 'wp-login.php', 'wp-register.php' ] ) )
             {
                 // If the user is already authenticated via SAML, but not logged in yet
-                if( $this->saml->isAuthenticated()  )
+                if( $this->saml->isAuthenticated() && !is_user_logged_in()  )
                 {
                      // Get their SAML attributes
                     $attrs = $this->saml->getAttributes();
