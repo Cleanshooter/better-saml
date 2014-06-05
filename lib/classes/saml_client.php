@@ -17,19 +17,6 @@ class SAML_Client
         {
             // Set up SAML auth instance
             $this->saml = new SimpleSAML_Auth_Simple( (string) get_current_blog_id() );
-
-            if( $_GET['saml_action'] == 'login' )
-            {
-                // If the user is already authenticated via SAML, but not logged in yet
-                if( $this->saml->isAuthenticated() )
-                {
-                     // Get their SAML attributes
-                    $attrs = $this->saml->getAttributes();
-
-                    // Simulate sign on with SAML username
-                    $this->authenticate( $attrs );
-                }
-            }
             
             // Add filters
             // add_action( 'wp_authenticate', array( $this, 'authenticate' ) );
@@ -45,6 +32,22 @@ class SAML_Client
         // it's messy, so be careful!
 
         $this->secretsauce = constant( 'AUTH_KEY' );
+    }
+
+    public function init()
+    {
+        if( $_GET['saml_action'] == 'login' )
+        {
+            // If the user is already authenticated via SAML, but not logged in yet
+            if( $this->saml->isAuthenticated() )
+            {
+                 // Get their SAML attributes
+                $attrs = $this->saml->getAttributes();
+
+                // Simulate sign on with SAML username
+                $this->authenticate( $attrs );
+            }
+        }
     }
 
     public function getLoginUrl( $return )

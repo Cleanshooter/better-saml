@@ -28,6 +28,7 @@ $SAML_Client = new SAML_Client();
 // add_action( 'password_reset',    array( $SAML_Client, 'disable_function' ) );
 // add_filter( 'show_password_fields', array($SAML_Client,'show_password_fields'));
 
+add_action('init', array( $SAML_Client, 'init' ) );
 
 // Things needed only by the admin portal
 if( is_admin() )
