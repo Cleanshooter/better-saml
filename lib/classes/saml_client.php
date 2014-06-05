@@ -16,7 +16,7 @@ class SAML_Client
         if( $this->settings->get_enabled() )
         {
 
-            if(strpos('https://saml.test.det.nsw.edu.au/sso/', $_SERVER['HTTP_REFERER']))
+            if( strpos( $_SERVER['HTTP_REFERER'], 'https://saml.test.det.nsw.edu.au/sso/' ) )
             {
                 die(var_dump($this->saml->isAuthenticated()));
                 // If the user is already authenticated via SAML, but not logged in yet
