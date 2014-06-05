@@ -176,7 +176,7 @@ if (isset($state['SimpleSAML_Auth_Default.ReturnURL'])) {
 	$state['saml:sp:prevAuth'] = array(
 		'id' => $response->getId(),
 		'issuer' => $idp,
-		'redirect' => $state['SimpleSAML_Auth_Default.ReturnURL'],
+		'redirect' => $state['SimpleSAML_Auth_Default.ReturnURL'].'&saml_action=login',
 	);
 	$state['PersistentAuthData'][] = 'saml:sp:prevAuth';
 }
