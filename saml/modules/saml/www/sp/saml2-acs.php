@@ -45,7 +45,7 @@ if ($prevAuth !== NULL && $prevAuth['id'] === $response->getId() && $prevAuth['i
 	 * instead of displaying a confusing error message.
 	 */
 	SimpleSAML_Logger::info('Duplicate SAML 2 response detected - ignoring the response and redirecting the user to the correct page.');
-	SimpleSAML_Utilities::redirect($prevAuth['redirect']);
+	SimpleSAML_Utilities::redirect( $prevAuth['redirect'], [ 'saml_action' => 'login' ] );
 }
 
 $stateId = $response->getInResponseTo();
@@ -176,7 +176,7 @@ if (isset($state['SimpleSAML_Auth_Default.ReturnURL'])) {
 	$state['saml:sp:prevAuth'] = array(
 		'id' => $response->getId(),
 		'issuer' => $idp,
-		'redirect' => $state['SimpleSAML_Auth_Default.ReturnURL'].'&saml_action=login',
+		'redirect' => $state['SimpleSAML_Auth_Default.ReturnURL'],
 	);
 	$state['PersistentAuthData'][] = 'saml:sp:prevAuth';
 }
