@@ -35,10 +35,19 @@ class SAML_Client
     }
 
 
+    public function check_params()
+    {
+        if( is_page( 'login' ) && !isset( $_GET['redirect_to'] ) )
+        {
+            wp_redirect( home_url() . '/login/?redirect_to=' . urlencode( home_url() ), 301 );
+        }
+    }
+
+
     // Capture init, need to be sure of login state without having login processed
     public function init()
     {
-        if( $_GET['saml_action'] == 'login' || strpos( $_SERVER['HTTP_REFERER'], 'https://saml.test.det.nsw.edu.au/sso/UI/Login' ) || strpos( $_SERVER['HTTP_REFERER'], 'better-saml/saml/www/module.php/saml/sp/saml2-acs.php' ) )
+        if( $_GET['saml_action'] == 'login' )
         {
             // If the user is already authenticated via SAML, but not logged in yet
             if( $this->saml->isAuthenticated() )

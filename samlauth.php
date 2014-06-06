@@ -30,6 +30,8 @@ $SAML_Client = new SAML_Client();
 
 add_action('init', array( $SAML_Client, 'init' ) );
 
+add_action( 'template_redirect', array( $SAML_Client, 'check_params' ) );
+
 // Things needed only by the admin portal
 if( is_admin() )
 {
