@@ -63,7 +63,7 @@ class SAML_Client
 
     public function getLoginUrl( $return )
     {
-        return $this->saml->getLoginURL ( $return );
+        return $this->saml->getLoginURL ( $return ) . urlencode('&saml_action=login');
     }
 
   
