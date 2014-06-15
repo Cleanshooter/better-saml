@@ -47,7 +47,7 @@ class SAML_Client
     // Capture init, need to be sure of login state without having login processed
     public function init()
     {
-        if( $_GET['saml_action'] == 'login' )
+        if( isset( $_GET['saml_action'] ) && $_GET['saml_action'] == 'login' )
         {
             // If the user is already authenticated via SAML, but not logged in yet
             if( $this->saml->isAuthenticated() )
